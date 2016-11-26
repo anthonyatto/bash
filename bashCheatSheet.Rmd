@@ -1,0 +1,95 @@
+---
+title: "bash Cheat Sheet"
+author: "Anthony Atto"
+
+output:
+  html_document:
+    code_folding: hide
+    toc: true
+    toc_float:
+      collapsed: false
+    md_extensions: +raw_html
+---
+
+```{r setup, warning=FALSE, message=FALSE}
+# set knitr options
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+require(remoji)
+require(htmltools)
+```
+
+## Overview  
+This is a document I created to help me remember some key commands and uses for BASH.
+
+## Basics  
+### Philosophy
+command.  options.  arguments.  
+
+### Navigation  
+* `cd`  
+* `ls`
+* `cat`
+* `echo`
+
+### Help  
+
+### Profiles
+
+## `r HTML(paste("Major", emoji("key")))`  
+### cron
+* `crontab`
+* `-e`, `-l`
+
+
+## SSH & Key Management  
+### Generate a Key  
+> `ssh-keygen -t rsa`  
+
+This generates both a public and private key
+
+### .ssh Folder Location  
+> `/Users/ARA/.ssh`  
+
+This directory is hidden in the users home directory.  the `.` hides it in the finder and will not be shown with just the `ls` command.  `ls -a` must be used to show hidden files.  
+
+### Copy a Key to the Server  
+#### Linux  
+> `ssh-copy-id user@server.com`
+
+Copying keys on a Linux machine is easy.  It will automatically put the public key in the server's .ssh folder for you.
+
+#### Mac
+Mac is more complicated.  You have to copy a key to the server, then move the key into the .ssh directory.  
+  
+1.  Use Secure Copy  
+
+> `scp [key location] user@server.com:`
+
+Use secure copy to send the public key to the server.  An example:  `scp .ssh/id_rsa.pub anthony@anthonyatto.com:`.  Be sure to include the `:` at the end of the line.
+
+2.  Log Into Server  
+
+> `ssh [user@server.com]`
+
+SSH into the server so that you can then move the public key to the right place yourself.  An example: `ssh anthony@anthonyatto.com`.  You will likely be prompted for a password (or will automatically be logged in if you have a keypair set up).  
+
+3.  Store the Public Key in `authorized_keys`  
+
+> `mkdir ~/.ssh`
+`cat id_rsa.pub > .ssh/authorized_keys`  
+
+Check that the public key is where you expected it to be (in `$HOME`).  If one is not already there, create an `.ssh` directory.  Then, move the public key to `.ssh/authorized_keys`.
+
+### Connect to the Server using Key  
+> `ssh -i [private key location] [user@server.com]`
+
+Connects after matching private key on local host and public key on server.  An example:  `ssh - i ~/.ssh/id_rsa anthony@anthonyatto.com`.  The `-i` option tells `ssh` to 'identify' the public key on the server.  
+
+### SSH Shortcut
+> `Host anthony`    
+> `  User anthony`  
+> `  Hostname anthonyatto.com`  
+> `  IdentityFile ~/.ssh/id_rsa`  
+
+then, simply type `ssh anthony` and it will login automatically.
+ 
